@@ -55,18 +55,22 @@ export default function Home() {
         className="relative min-h-screen flex items-end overflow-hidden grain-overlay"
         aria-label="Hero"
       >
-        {/* Background image / placeholder */}
+        {/* Background video */}
         <motion.div
           className="absolute inset-0 hero-placeholder"
           style={prefersReduced ? {} : { y: heroY }}
         >
-          <img
-            src="/images/hero.jpg"
-            alt="The Mid Yoken bar — warm and welcoming interior"
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
             className="w-full h-full object-cover"
-            onError={e => { e.currentTarget.style.display = 'none' }}
-            fetchpriority="high"
-          />
+            aria-hidden="true"
+            preload="auto"
+          >
+            <source src="/images/hero.mp4" type="video/mp4" />
+          </video>
           {/* Gradient overlay */}
           <div
             className="absolute inset-0"
