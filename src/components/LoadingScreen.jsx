@@ -155,14 +155,16 @@ export default function LoadingScreen({ onComplete }) {
                 fill="rgba(255,255,255,0.04)"
               />
 
-              {/* ── BEER LIQUID — scaleY from bottom ──────────────── */}
+              {/* ── BEER LIQUID — y slides up from glass bottom ───── */}
+              {/* rect bottom is fixed at y=220 (outside glass); animating y
+                  from 194 (empty — rect sits below glass) to 0 (full)
+                  so the liquid rises from the bottom of the glass upward */}
               <motion.rect
-                x="0" y="0" width="120" height="220"
+                x="0" width="120" height="220"
                 fill="url(#beer-grad)"
                 clipPath="url(#glass-liquid-clip)"
-                style={{ transformOrigin: '60px 194px' }}
-                initial={{ scaleY: 0 }}
-                animate={fillActive ? { scaleY: 1 } : { scaleY: 0 }}
+                initial={{ y: 194 }}
+                animate={fillActive ? { y: 0 } : { y: 194 }}
                 transition={{ duration: 2.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
               />
 
