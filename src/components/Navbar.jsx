@@ -16,6 +16,11 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
 
+  // Only the homepage has a dark video hero — all other pages use light backgrounds
+  const isHome = location.pathname === '/'
+  // Show solid green background if scrolled OR if not on the home page
+  const solid = scrolled || !isHome
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48)
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -29,18 +34,18 @@ export default function Navbar() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
+          solid
             ? 'nav-glass backdrop-blur-md shadow-lg py-3'
             : 'bg-transparent py-5'
         }`}
-        style={scrolled ? { backgroundColor: 'rgba(28,56,41,0.96)' } : {}}
+        style={solid ? { backgroundColor: 'rgba(28,56,41,0.96)' } : {}}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex flex-col leading-none group" aria-label="The Mid Yoken — Home">
             <span
-              className="font-display text-cream text-xl tracking-tight transition-opacity duration-200 group-hover:opacity-80"
-              style={{ fontWeight: 700 }}
+              className="font-display text-xl tracking-tight transition-opacity duration-200 group-hover:opacity-80"
+              style={{ fontWeight: 700, color: solid ? 'var(--cream)' : 'var(--cream)' }}
             >
               The Mid Yoken
             </span>
@@ -60,7 +65,7 @@ export default function Navbar() {
                   `font-body text-sm tracking-wide transition-colors duration-200 relative group ${
                     isActive
                       ? 'text-amber-warm'
-                      : 'text-cream/80 hover:text-cream'
+                      : 'text-cream hover:text-amber-gold'
                   }`
                 }
               >

@@ -1,19 +1,17 @@
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useEffect, useState, useRef } from 'react'
 
-/* ─── Bubble config ──────────────────────────────────────────── */
 const BUBBLES = [
-  { id: 1, cx: 44, delay: 0,    dur: 1.8, size: 3 },
-  { id: 2, cx: 58, delay: 0.4,  dur: 2.2, size: 2 },
-  { id: 3, cx: 72, delay: 0.8,  dur: 1.6, size: 3.5 },
-  { id: 4, cx: 50, delay: 1.1,  dur: 2.0, size: 2 },
-  { id: 5, cx: 65, delay: 0.2,  dur: 1.9, size: 2.5 },
-  { id: 6, cx: 42, delay: 1.4,  dur: 2.3, size: 2 },
-  { id: 7, cx: 76, delay: 0.6,  dur: 1.7, size: 3 },
-  { id: 8, cx: 55, delay: 1.7,  dur: 2.1, size: 2 },
+  { id: 1, cx: 44, delay: 0,    dur: 1.8, size: 3   },
+  { id: 2, cx: 58, delay: 0.4,  dur: 2.2, size: 2.5 },
+  { id: 3, cx: 72, delay: 0.8,  dur: 1.6, size: 4   },
+  { id: 4, cx: 50, delay: 1.1,  dur: 2.0, size: 2   },
+  { id: 5, cx: 65, delay: 0.2,  dur: 1.9, size: 3   },
+  { id: 6, cx: 42, delay: 1.4,  dur: 2.3, size: 2   },
+  { id: 7, cx: 76, delay: 0.6,  dur: 1.7, size: 3.5 },
+  { id: 8, cx: 55, delay: 1.7,  dur: 2.1, size: 2   },
 ]
 
-/* ─── Single rising bubble ───────────────────────────────────── */
 function Bubble({ cx, delay, dur, size, fillActive }) {
   if (!fillActive) return null
   return (
@@ -21,14 +19,14 @@ function Bubble({ cx, delay, dur, size, fillActive }) {
       cx={cx}
       cy={185}
       r={size}
-      fill="rgba(255,255,255,0.25)"
+      fill="rgba(255,255,255,0.3)"
       initial={{ cy: 185, opacity: 0 }}
-      animate={{ cy: 38, opacity: [0, 0.6, 0] }}
+      animate={{ cy: 38, opacity: [0, 0.7, 0] }}
       transition={{
         duration: dur,
         delay,
         repeat: Infinity,
-        repeatDelay: 0.5,
+        repeatDelay: 0.4,
         ease: 'easeOut',
       }}
     />
@@ -92,99 +90,164 @@ export default function LoadingScreen({ onComplete }) {
             }}
           />
 
-          {/* Amber glow behind glass */}
+          {/* Amber radial glow — pulses as glass fills */}
           <motion.div
             style={{
               position: 'absolute',
-              width: 280,
-              height: 280,
+              width: 360,
+              height: 360,
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(196,137,42,0.18) 0%, transparent 70%)',
-              filter: 'blur(30px)',
+              background: 'radial-gradient(circle, rgba(196,137,42,0.22) 0%, transparent 70%)',
+              filter: 'blur(40px)',
             }}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={phase !== 'filling' ? { scale: 1.4, opacity: 1 } : { scale: 0.8, opacity: 0 }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={
+              phase === 'foam' || phase === 'text'
+                ? { scale: 1.6, opacity: 1 }
+                : fillActive
+                ? { scale: 1.0, opacity: 0.5 }
+                : { scale: 0.4, opacity: 0 }
+            }
+            transition={{ duration: 1.4, ease: 'easeOut' }}
           />
 
-          {/* ── PINT GLASS SVG ─────────────────────────────────────── */}
+          {/* ── PINT GLASS SVG ─────────────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            initial={{ opacity: 0, y: 40, scale: 0.85 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+            transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
           >
+            {/*
+              SVG viewBox extended upward to -40 so the pour stream
+              can be drawn above the glass rim (which sits at y=20).
+              Total height 260 = 40 above + 220 original.
+            */}
             <svg
-              viewBox="0 0 120 220"
+              viewBox="0 -40 120 260"
               width="170"
-              height="255"
-              style={{ filter: 'drop-shadow(0 20px 40px rgba(196,137,42,0.3))' }}
+              height="283"
+              style={{ filter: 'drop-shadow(0 24px 48px rgba(196,137,42,0.35))' }}
               aria-hidden="true"
             >
               <defs>
-                {/* Clip path = inner glass shape */}
+                {/* Inner glass shape – used as clip for beer + cover */}
                 <clipPath id="glass-liquid-clip">
                   <path d="M22,20 Q19,108 34,194 L86,194 Q101,108 98,20 Z" />
                 </clipPath>
 
-                {/* Liquid gradient — rich amber layers */}
+                {/* Amber beer gradient */}
                 <linearGradient id="beer-grad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%"   stopColor="#8B5414" />
-                  <stop offset="30%"  stopColor="#C4892A" />
-                  <stop offset="60%"  stopColor="#DBA84E" />
-                  <stop offset="85%"  stopColor="#C4892A" />
-                  <stop offset="100%" stopColor="#7A4810" />
+                  <stop offset="0%"   stopColor="#7A4810" />
+                  <stop offset="25%"  stopColor="#C4892A" />
+                  <stop offset="55%"  stopColor="#DBA84E" />
+                  <stop offset="80%"  stopColor="#C4892A" />
+                  <stop offset="100%" stopColor="#6B3D0E" />
+                </linearGradient>
+
+                {/* Pour-stream gradient — slightly lighter at tip */}
+                <linearGradient id="stream-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stopColor="#DBA84E" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#C4892A" stopOpacity="0.7" />
                 </linearGradient>
 
                 {/* Foam gradient */}
                 <linearGradient id="foam-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"  stopColor="#FBF7F2" />
+                  <stop offset="0%"   stopColor="#FBF7F2" />
                   <stop offset="100%" stopColor="#EDE5D6" />
                 </linearGradient>
 
-                {/* Glass highlight gradient */}
+                {/* Glass shine gradient */}
                 <linearGradient id="glass-shine" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%"   stopColor="rgba(255,255,255,0.12)" />
-                  <stop offset="35%"  stopColor="rgba(255,255,255,0.06)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                  <stop offset="0%"   stopColor="rgba(255,255,255,0.14)" />
+                  <stop offset="40%"  stopColor="rgba(255,255,255,0.06)" />
+                  <stop offset="100%" stopColor="rgba(255,255,255,0)"    />
                 </linearGradient>
               </defs>
 
-              {/* ── Glass body fill (empty tint) */}
+              {/* ── POUR STREAM (above glass, visible during fill) ─────── */}
+              <motion.g
+                initial={{ opacity: 0 }}
+                animate={phase === 'filling' && fillActive ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                {/* Main stream */}
+                <motion.rect
+                  x="57" y="-38" width="6" rx="2"
+                  fill="url(#stream-grad)"
+                  initial={{ height: 0 }}
+                  animate={fillActive ? { height: 60 } : { height: 0 }}
+                  transition={{ duration: 0.4, delay: 0.05, ease: 'easeOut' }}
+                />
+                {/* Splash ring at rim */}
+                <motion.ellipse
+                  cx="60" cy="20" rx="12" ry="4"
+                  fill="rgba(196,137,42,0.35)"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={fillActive ? { scaleX: [0, 1.4, 1, 0], opacity: [0, 0.8, 0.4, 0] } : {}}
+                  transition={{ duration: 1.2, delay: 0.2, ease: 'easeOut', times: [0, 0.2, 0.5, 1] }}
+                />
+              </motion.g>
+
+              {/* ── Glass body (empty tint) */}
               <path
                 d="M22,20 Q19,108 34,194 L86,194 Q101,108 98,20 Z"
                 fill="rgba(255,255,255,0.04)"
               />
 
-              {/* ── BEER LIQUID — y slides up from glass bottom ───── */}
-              {/* rect bottom is fixed at y=220 (outside glass); animating y
-                  from 194 (empty — rect sits below glass) to 0 (full)
-                  so the liquid rises from the bottom of the glass upward */}
-              <motion.rect
-                x="0" width="120" height="220"
+              {/*
+                ── BEER FILL — reverse-cover technique ───────────────────
+                The full amber shape is always drawn inside the clip.
+                A green rect (matching bg) sits on top and shrinks from
+                bottom to top (height 174→0, y fixed at 20), revealing
+                beer from the bottom of the glass upward.
+                No CSS transform tricks — just SVG height animation.
+              */}
+              {/* Amber fill — always drawn, only visible as cover shrinks */}
+              <path
+                d="M22,20 Q19,108 34,194 L86,194 Q101,108 98,20 Z"
                 fill="url(#beer-grad)"
+              />
+
+              {/* Green cover — shrinks upward to reveal beer from bottom */}
+              <motion.rect
+                x="0"
+                y="20"
+                width="120"
                 clipPath="url(#glass-liquid-clip)"
-                initial={{ y: 194 }}
-                animate={fillActive ? { y: 0 } : { y: 194 }}
+                fill="#1C3829"
+                initial={{ height: 174 }}
+                animate={fillActive ? { height: 0 } : { height: 174 }}
                 transition={{ duration: 2.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
               />
 
-              {/* ── BUBBLES (inside liquid) ──────────────────────── */}
+              {/* ── BUBBLES (clipped inside beer) ─────────────────────── */}
               <g clipPath="url(#glass-liquid-clip)">
                 {BUBBLES.map(b => (
                   <Bubble key={b.id} {...b} fillActive={fillActive} />
                 ))}
               </g>
 
-              {/* ── FOAM HEAD ────────────────────────────────────── */}
+              {/* ── SURFACE SHIMMER — thin amber line at fill level ────── */}
+              {fillActive && phase === 'filling' && (
+                <motion.line
+                  x1="34" x2="86"
+                  stroke="rgba(240,212,154,0.5)"
+                  strokeWidth="1.5"
+                  clipPath="url(#glass-liquid-clip)"
+                  initial={{ y1: 194, y2: 194, opacity: 0 }}
+                  animate={{ y1: 22, y2: 22, opacity: [0, 0.8, 0] }}
+                  transition={{ duration: 2.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                />
+              )}
+
+              {/* ── FOAM HEAD ─────────────────────────────────────────── */}
               <motion.g
-                initial={{ opacity: 0, y: 12 }}
-                animate={phase === 'foam' || phase === 'text' ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={phase === 'foam' || phase === 'text' ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
                 clipPath="url(#glass-liquid-clip)"
               >
-                {/* Foam base */}
                 <ellipse cx="60" cy="32" rx="38" ry="16" fill="url(#foam-grad)" />
-                {/* Foam bubbles */}
                 {[
                   { cx: 38, cy: 26, r: 9 },
                   { cx: 55, cy: 22, r: 11 },
@@ -199,47 +262,46 @@ export default function LoadingScreen({ onComplete }) {
                     key={i}
                     cx={b.cx} cy={b.cy} r={b.r}
                     fill="url(#foam-grad)"
-                    stroke="rgba(255,255,255,0.3)"
+                    stroke="rgba(255,255,255,0.35)"
                     strokeWidth="0.5"
                     initial={{ scale: 0 }}
                     animate={phase === 'foam' || phase === 'text' ? { scale: 1 } : { scale: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.04 }}
+                    transition={{ duration: 0.35, delay: i * 0.04 }}
                     style={{ transformOrigin: `${b.cx}px ${b.cy}px` }}
                   />
                 ))}
               </motion.g>
 
-              {/* ── Glass outline ─────────────────────────────────── */}
+              {/* ── Glass outline ──────────────────────────────────────── */}
               <path
                 d="M22,20 Q19,108 34,194 L86,194 Q101,108 98,20 Z"
                 fill="none"
-                stroke="rgba(255,255,255,0.22)"
+                stroke="rgba(255,255,255,0.25)"
                 strokeWidth="1.5"
               />
 
               {/* Rim ellipse */}
               <ellipse cx="60" cy="20" rx="38" ry="9"
                 fill="rgba(255,255,255,0.06)"
-                stroke="rgba(255,255,255,0.28)"
+                stroke="rgba(255,255,255,0.32)"
                 strokeWidth="1.2"
               />
 
               {/* Base */}
               <rect x="30" y="192" width="60" height="8" rx="3"
                 fill="rgba(255,255,255,0.08)"
-                stroke="rgba(255,255,255,0.2)"
+                stroke="rgba(255,255,255,0.22)"
                 strokeWidth="1"
               />
 
-              {/* Glass shine strip (left) */}
+              {/* Shine strips */}
               <path
                 d="M26,26 Q24,100 36,188"
                 fill="none"
-                stroke="rgba(255,255,255,0.18)"
+                stroke="rgba(255,255,255,0.2)"
                 strokeWidth="5"
                 strokeLinecap="round"
               />
-              {/* Thin shine */}
               <path
                 d="M30,26 Q28,100 39,188"
                 fill="none"
@@ -250,11 +312,11 @@ export default function LoadingScreen({ onComplete }) {
             </svg>
           </motion.div>
 
-          {/* ── TEXT BELOW GLASS ───────────────────────────────────── */}
+          {/* ── TEXT ────────────────────────────────────────────────────── */}
           <motion.div
             className="text-center mt-8"
-            initial={{ opacity: 0, y: 16 }}
-            animate={phase === 'text' ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
+            animate={phase === 'text' ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <p
@@ -271,7 +333,7 @@ export default function LoadingScreen({ onComplete }) {
             </p>
           </motion.div>
 
-          {/* ── Fill progress bar (subtle, bottom of screen) ─────── */}
+          {/* ── Progress bar ─────────────────────────────────────────────── */}
           <div
             style={{
               position: 'absolute',
