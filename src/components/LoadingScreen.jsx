@@ -117,15 +117,10 @@ export default function LoadingScreen({ onComplete }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
           >
-            {/*
-              SVG viewBox extended upward to -40 so the pour stream
-              can be drawn above the glass rim (which sits at y=20).
-              Total height 260 = 40 above + 220 original.
-            */}
             <svg
-              viewBox="0 -40 120 260"
+              viewBox="0 0 120 220"
               width="170"
-              height="283"
+              height="255"
               style={{ filter: 'drop-shadow(0 24px 48px rgba(196,137,42,0.35))' }}
               aria-hidden="true"
             >
@@ -144,12 +139,6 @@ export default function LoadingScreen({ onComplete }) {
                   <stop offset="100%" stopColor="#6B3D0E" />
                 </linearGradient>
 
-                {/* Pour-stream gradient — slightly lighter at tip */}
-                <linearGradient id="stream-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#DBA84E" stopOpacity="0.9" />
-                  <stop offset="100%" stopColor="#C4892A" stopOpacity="0.7" />
-                </linearGradient>
-
                 {/* Foam gradient */}
                 <linearGradient id="foam-grad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%"   stopColor="#FBF7F2" />
@@ -163,30 +152,6 @@ export default function LoadingScreen({ onComplete }) {
                   <stop offset="100%" stopColor="rgba(255,255,255,0)"    />
                 </linearGradient>
               </defs>
-
-              {/* ── POUR STREAM (above glass, visible during fill) ─────── */}
-              <motion.g
-                initial={{ opacity: 0 }}
-                animate={phase === 'filling' && fillActive ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-              >
-                {/* Main stream */}
-                <motion.rect
-                  x="57" y="-38" width="6" rx="2"
-                  fill="url(#stream-grad)"
-                  initial={{ height: 0 }}
-                  animate={fillActive ? { height: 60 } : { height: 0 }}
-                  transition={{ duration: 0.4, delay: 0.05, ease: 'easeOut' }}
-                />
-                {/* Splash ring at rim */}
-                <motion.ellipse
-                  cx="60" cy="20" rx="12" ry="4"
-                  fill="rgba(196,137,42,0.35)"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={fillActive ? { scaleX: [0, 1.4, 1, 0], opacity: [0, 0.8, 0.4, 0] } : {}}
-                  transition={{ duration: 1.2, delay: 0.2, ease: 'easeOut', times: [0, 0.2, 0.5, 1] }}
-                />
-              </motion.g>
 
               {/* ── Glass body (empty tint) */}
               <path
