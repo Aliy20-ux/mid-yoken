@@ -1,15 +1,16 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect } from 'react'
-import Navbar    from './components/Navbar'
-import Footer    from './components/Footer'
-import Home      from './pages/Home'
-import About     from './pages/About'
-import WhatsOn   from './pages/WhatsOn'
-import FoodDrink from './pages/FoodDrink'
-import Functions from './pages/Functions'
-import Contact   from './pages/Contact'
+import { useEffect, useState, useCallback } from 'react'
+import Navbar       from './components/Navbar'
+import Footer       from './components/Footer'
+import LoadingScreen from './components/LoadingScreen'
+import Home         from './pages/Home'
+import About        from './pages/About'
+import WhatsOn      from './pages/WhatsOn'
+import FoodDrink    from './pages/FoodDrink'
+import Functions    from './pages/Functions'
+import Contact      from './pages/Contact'
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -65,11 +66,33 @@ function NotFound() {
 }
 
 export default function App() {
+  // Show loader only on first visit per session
+  const [loading, setLoading] = useState(() => {
+    if (typeof sessionStorage === 'undefined') return false
+    return !sessionStorage.getItem('mid-yoken-visited')
+  })
+
+  const handleLoaderComplete = useCallback(() => {
+    sessionStorage.setItem('mid-yoken-visited', '1')
+    setLoading(false)
+  }, [])
+
   return (
     <HelmetProvider>
+      {/* Loading screen — sits above everything, slides up on complete */}
+      <AnimatePresence>
+        {loading && (
+          <LoadingScreen key="loader" onComplete={handleLoaderComplete} />
+        )}
+      </AnimatePresence>
+
       <BrowserRouter>
         <ScrollToTop />
-        <div className="flex flex-col min-h-screen">
+        {/* Site content — always mounted so hero video can preload */}
+        <div
+          className="flex flex-col min-h-screen"
+          style={loading ? { visibility: 'hidden' } : {}}
+        >
           <Navbar />
           <AnimatedRoutes />
           <Footer />
