@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens ─────────────────────────────────────── */
+:root {
+  --green-deep:  #1C3829;
+  --green-mid:   #2E5445;
+  --amber-warm:  #C4892A;
+  --amber-gold:  #DBA84E;
+  --charcoal:    #1A1918;
+  --cream:       #F5EEE5;
+  --ivory:       #FBF7F2;
+  --stone:       #8A7F70;
+  --rust:        #7C3728;
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Lato', Helvetica, sans-serif;
+  background-color: var(--ivory);
+  color: var(--charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+#root { min-height: 100vh; }
+
+/* ── Typography helpers ─────────────────────────────────── */
+.font-display { font-family: 'Playfair Display', Georgia, serif; }
+
+.text-display-xl {
+  font-size: clamp(2.75rem, 6vw, 6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.text-display-lg {
+  font-size: clamp(2rem, 4vw, 3.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.text-display-md {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.2;
+}
+
+/* ── Amber rule line (decorative) ───────────────────────── */
+.amber-rule {
+  display: block;
+  width: 3.5rem;
+  height: 2px;
+  background: var(--amber-warm);
+  margin-bottom: 1.25rem;
+}
+
+/* ── Section padding ────────────────────────────────────── */
+.section-pad { padding-top: 6rem; padding-bottom: 6rem; }
+.section-pad-sm { padding-top: 4rem; padding-bottom: 4rem; }
+
+/* ── Silk easing ─────────────────────────────────────────── */
+.ease-silk { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+/* ── Nav backdrop blur polyfill fallback ─────────────────── */
+@supports not (backdrop-filter: blur(12px)) {
+  .nav-glass { background-color: rgba(28, 56, 41, 0.97) !important; }
+}
+
+/* ── Focus ring ─────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--amber-warm);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Custom scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 3px; }
+
+/* ── Hero gradient placeholder (until real photo supplied) ── */
+.hero-placeholder {
+  background: linear-gradient(135deg, #1C3829 0%, #2E5445 40%, #3D6B57 70%, #1A1918 100%);
+}
+
+/* ── Grain texture overlay ───────────────────────────────── */
+.grain-overlay {
+  position: relative;
+}
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 2;
+  mix-blend-mode: overlay;
+}
+
+/* ── Highlight card hover ────────────────────────────────── */
+.highlight-card {
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.highlight-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(28, 56, 41, 0.15);
+}
+
+/* ── Button base ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  border: none;
+  line-height: 1;
+}
+.btn-amber {
+  background: var(--amber-warm);
+  color: var(--charcoal);
+}
+.btn-amber:hover {
+  background: var(--amber-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(196, 137, 42, 0.35);
+}
+.btn-cream-outline {
+  background: transparent;
+  color: var(--cream);
+  border: 2px solid var(--cream);
+}
+.btn-cream-outline:hover {
+  background: var(--cream);
+  color: var(--charcoal);
+}
+.btn-green {
+  background: var(--green-deep);
+  color: var(--cream);
+}
+.btn-green:hover {
+  background: var(--green-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(28, 56, 41, 0.3);
+}
+.btn-green-outline {
+  background: transparent;
+  color: var(--green-deep);
+  border: 2px solid var(--green-deep);
+}
+.btn-green-outline:hover {
+  background: var(--green-deep);
+  color: var(--cream);
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider-amber {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--amber-warm), transparent);
+  opacity: 0.4;
+}
