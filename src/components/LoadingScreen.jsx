@@ -205,23 +205,23 @@ export default function LoadingScreen({ onComplete }) {
                 />
               )}
 
-              {/* ── FOAM HEAD ─────────────────────────────────────────── */}
+              {/* ── FOAM HEAD — no clip so it sits at and above the rim ── */}
               <motion.g
-                initial={{ opacity: 0, y: 14 }}
-                animate={phase === 'foam' || phase === 'text' ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={phase === 'foam' || phase === 'text' ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                clipPath="url(#glass-liquid-clip)"
               >
-                <ellipse cx="60" cy="32" rx="38" ry="16" fill="url(#foam-grad)" />
+                {/* Base ellipse straddles the rim (y=20) */}
+                <ellipse cx="60" cy="22" rx="36" ry="14" fill="url(#foam-grad)" />
                 {[
-                  { cx: 38, cy: 26, r: 9 },
-                  { cx: 55, cy: 22, r: 11 },
-                  { cx: 72, cy: 25, r: 9 },
-                  { cx: 84, cy: 30, r: 7 },
-                  { cx: 30, cy: 32, r: 6 },
-                  { cx: 45, cy: 19, r: 7 },
-                  { cx: 65, cy: 18, r: 8 },
-                  { cx: 78, cy: 20, r: 6 },
+                  { cx: 38, cy: 16, r: 9  },
+                  { cx: 55, cy: 12, r: 11 },
+                  { cx: 72, cy: 15, r: 9  },
+                  { cx: 84, cy: 20, r: 7  },
+                  { cx: 30, cy: 22, r: 6  },
+                  { cx: 45, cy: 9,  r: 7  },
+                  { cx: 65, cy: 8,  r: 8  },
+                  { cx: 78, cy: 10, r: 6  },
                 ].map((b, i) => (
                   <motion.circle
                     key={i}
